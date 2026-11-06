@@ -8,7 +8,7 @@
 
         public int Difficulty { get; set; }
 
-        public TaskStatus Status { get; set; }= TaskStatus.Pending;
+        public TaskItemStatus Status { get; set; }= TaskItemStatus.Pending;
         public int? DeveloperId { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
