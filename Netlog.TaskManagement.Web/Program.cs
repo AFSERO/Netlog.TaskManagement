@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Netlog.TaskManagement.Web.Data;
 using Netlog.TaskManagement.Web.Models;
-
+using Netlog.TaskManagement.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

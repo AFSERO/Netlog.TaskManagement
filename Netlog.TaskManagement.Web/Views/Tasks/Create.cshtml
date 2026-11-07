@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Yeni Görev";
+}
+
+<h2>Yeni Görev Oluştur</h2>
+
+<form asp-controller="Tasks" asp-action="Create" method="post">
+
+    <div class="mb-3">
+        <label>Görev Adı</label>
+        <input type="text" name="title" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label>Zorluk Seviyesi (1-8)</label>
+        <input type="number" name="difficulty" min="1" max="8"
+               class="form-control" required />
+    </div>
+
+    <p class="text-danger">@ViewBag.Error</p>
+
+    <button type="submit" class="btn btn-primary">Kaydet</button>
+    <a asp-action="Index" class="btn btn-secondary">Geri Dön</a>
+
+</form>

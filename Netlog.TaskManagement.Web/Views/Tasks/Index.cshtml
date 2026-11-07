@@ -1,0 +1,45 @@
+﻿@model List<Netlog.TaskManagement.Web.Models.TaskItem>
+
+@{
+    ViewData["Title"] = "Görevler";
+}
+
+<h2>Görev Listesi</h2>
+<p>Developer Sayısı: @ViewBag.DeveloperCount</p>
+
+<a asp-action="Create" class="btn btn-primary mb-3">
+    Yeni Görev Ekle
+</a>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Görev Adı</th>
+            <th>Zorluk</th>
+            <th>Durum</th>
+            <th>Developer</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var taskItem in Model)
+        {
+            <tr>
+                <td>@taskItem.Id</td>
+                <td>@taskItem.Title</td>
+                <td>@taskItem.Difficulty</td>
+                <td>@taskItem.Status</td>
+                <td>
+                    @if (taskItem.DeveloperId == null)
+                    {
+                        <span>Atanamadı</span>
+                    }
+                    else
+                    {
+                        <span>Developer @taskItem.DeveloperId</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
