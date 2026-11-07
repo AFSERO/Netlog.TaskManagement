@@ -5,6 +5,7 @@
 }
 
 <h2>Görev Listesi</h2>
+
 <p>Developer Sayısı: @ViewBag.DeveloperCount</p>
 
 <a asp-action="Create" class="btn btn-primary mb-3">
@@ -19,6 +20,7 @@
             <th>Zorluk</th>
             <th>Durum</th>
             <th>Developer</th>
+            <th>İşlemler</th>
         </tr>
     </thead>
     <tbody>
@@ -38,6 +40,53 @@
                     {
                         <span>Developer @taskItem.DeveloperId</span>
                     }
+                </td>
+                <td> 
+                    <a asp-action="Edit" asp-route-id="@taskItem.Id"
+                       class="btn btn-warning btn-sm">
+                        Düzenle
+                    </a>
+
+                    @if (taskItem.Status != TaskItemStatus.Completed)
+                    {
+                        <form asp-action="Delete" asp-route-id="@taskItem.Id" method="post">
+                            <button type="submit" class="btn btn-danger btn-sm">Sil</button>
+                        </form>
+                    }
+
+                    
+                    
+                    <form asp-action="UpdateStatus" asp-route-id="@taskItem.Id" method="post">
+                        <select name="newStatus" class="form-select">
+                            @foreach (TaskItemStatus status in Enum.GetValues<TaskItemStatus>())
+                            {
+                                if (taskItem.Status == status)
+                                {
+                                    <option value="@status" selected>@status</option>
+                                }
+                                else
+                                {
+                                    <option value="@status">@status</option>
+                                }
+                            }
+                        </select>
+
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            Güncelle
+                        </button>
+                    </form>
+
+                    
+                    @if (taskItem.Status == TaskItemStatus.Pending)
+                    {
+                        <form asp-action="RetryAssignment" asp-route-id="@taskItem.Id" method="post">
+                            <button type="submit" class="btn btn-success btn-sm">
+                                Atamayı Tekrar Dene
+                            </button>
+                        </form>
+                    }
+
+
                 </td>
             </tr>
         }

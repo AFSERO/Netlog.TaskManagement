@@ -1,0 +1,37 @@
+﻿@model Netlog.TaskManagement.Web.Models.TaskItem
+
+@{
+    ViewData["Title"] = "Görev Düzenle";
+}
+
+<h2>Görev Düzenle</h2>
+
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+
+    <div class="mb-3">
+        <label>Görev Adı</label>
+        <input type="text" name="title" value="@Model.Title"
+               class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label>Zorluk Seviyesi</label>
+
+        @if (Model.Status == TaskItemStatus.Pending)
+        {
+            <input type="number" name="difficulty"
+                   value="@Model.Difficulty" min="1" max="8"
+                   class="form-control" required />
+        }
+        else
+        {
+            <p>@Model.Difficulty (Değiştirilemez)</p>
+        }
+    </div>
+
+    <p class="text-danger">@ViewBag.Error</p>
+
+    <button type="submit" class="btn btn-primary">Kaydet</button>
+    <a asp-action="Index" class="btn btn-secondary">Geri Dön</a>
+
+</form>

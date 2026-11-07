@@ -66,4 +66,146 @@ public class TasksController : Controller
         return RedirectToAction("Index");
     }
 
+
+
+
+
+    [HttpGet]
+    public IActionResult Edit(int id)
+    {
+        var taskItem = _context.Tasks.Find(id);
+
+        if (taskItem == null)
+        {
+            return NotFound();
+        }
+
+        return View(taskItem);
+    }
+
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Edit(int id, string title, int difficulty)
+    {
+        var taskItem = _context.Tasks.Find(id);
+
+        if (taskItem == null)
+        {
+            return NotFound();
+        }
+
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            ViewBag.Error = "Görev adı boş olamaz!";
+            return View(taskItem);
+        }
+
+        // Görev adını güncelle
+        taskItem.Title = title;
+
+        // Zorluk yalnızca Pending durumunda değiştirilebilir
+        if (taskItem.Status == TaskItemStatus.Pending)
+        {
+            if (difficulty < 1 || difficulty > 8)
+            {
+                ViewBag.Error = "Zorluk 1 ile 8 arasında olmalı!";
+                return View(taskItem);
+            }
+
+            taskItem.Difficulty = difficulty;
+        }
+
+        _context.SaveChanges();
+
+        return RedirectToAction("Index");
+    }
+
+
+
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Delete(int id)
+    {
+        var taskItem = _context.Tasks.Find(id);
+
+        if (taskItem == null)
+        {
+            return NotFound();
+        }
+
+        // Tamamlanan görevler silinemez
+        if (taskItem.Status == TaskItemStatus.Completed)
+        {
+            TempData["Error"] = "Tamamlanan görev silinemez!";
+            return RedirectToAction("Index");
+        }
+
+        _context.Tasks.Remove(taskItem);
+        _context.SaveChanges();
+
+        return RedirectToAction("Index");
+    }
+
+
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult UpdateStatus(int id, TaskItemStatus newStatus)
+    {
+        var taskItem = _context.Tasks.Find(id);
+
+        if (taskItem == null)
+        {
+            return NotFound();
+        }
+
+        // Pending yapılırsa developer atamasını kaldır
+        if (newStatus == TaskItemStatus.Pending)
+        {
+            taskItem.DeveloperId = null;
+            taskItem.AssignedAt = null;
+        }
+        else if (taskItem.DeveloperId == null)
+        {
+            // Developer yoksa önce otomatik atama yap
+            _assignmentService.AssignTask(id);
+
+            if (taskItem.DeveloperId == null)
+            {
+                return RedirectToAction("Index");
+            }
+        }
+
+        taskItem.Status = newStatus;
+        _context.SaveChanges();
+
+        return RedirectToAction("Index");
+    }
+
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult RetryAssignment(int id)
+    {
+        var taskItem = _context.Tasks.Find(id);
+
+        if (taskItem == null)
+        {
+            return NotFound();
+        }
+
+        // Sadece Pending görevler yeniden atanabilir
+        if (taskItem.Status == TaskItemStatus.Pending)
+        {
+            _assignmentService.AssignTask(id);
+        }
+
+        return RedirectToAction("Index");
+    }
+
+
+
+
 }
