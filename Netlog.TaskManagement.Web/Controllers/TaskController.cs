@@ -1,8 +1,9 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Netlog.TaskManagement.Web.Data;
-using Netlog.TaskManagement.Web.Services;
 using Netlog.TaskManagement.Web.Models;
+using Netlog.TaskManagement.Web.Services;
 
 
 
@@ -24,14 +25,20 @@ public class TasksController : Controller
     }
 
     // Görevleri listeler.
+
     public IActionResult Index()
     {
         var tasks = _context.Tasks.ToList();
 
-        ViewBag.DeveloperCount = _context.Developers.Count();
+        var developers = _context.Developers
+            .Include(d => d.Tasks)
+            .ToList();
+
+        ViewBag.Developers = developers;
 
         return View(tasks);
     }
+
 
     [HttpGet]
     public IActionResult Create()

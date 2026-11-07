@@ -1,8 +1,51 @@
 ﻿@model List<Netlog.TaskManagement.Web.Models.TaskItem>
-
+@using Netlog.TaskManagement.Web.Models
 @{
     ViewData["Title"] = "Görevler";
 }
+
+<h2>Developer İş Yükleri</h2>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Developer</th>
+            <th>Aktif Görev Sayısı</th>
+            <th>Aktif İş Yükü</th>
+            <th>Tamamlanan İş Yükü</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Developer developer in ViewBag.Developers)
+        {
+            int activeCount = 0;
+            int activeWorkload = 0;
+            int completedWorkload = 0;
+
+            foreach (var task in developer.Tasks)
+            {
+                if (task.Status == TaskItemStatus.Assigned ||
+                    task.Status == TaskItemStatus.InProgress)
+                {
+                    activeCount++;
+                    activeWorkload += task.Difficulty;
+                }
+
+                if (task.Status == TaskItemStatus.Completed)
+                {
+                    completedWorkload += task.Difficulty;
+                }
+            }
+
+            <tr>
+                <td>@developer.Name</td>
+                <td>@activeCount</td>
+                <td>@activeWorkload</td>
+                <td>@completedWorkload</td>
+            </tr>
+        }
+    </tbody>
+</table>
 
 <h2>Görev Listesi</h2>
 
