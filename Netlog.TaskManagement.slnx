@@ -1,4 +1,3 @@
 <Solution>
-  <Project Path="Netlog.TaskManagement.Domain/Netlog.TaskManagement.Domain.csproj" />
   <Project Path="Netlog.TaskManagement.Web/Netlog.TaskManagement.Web.csproj" />
 </Solution>
