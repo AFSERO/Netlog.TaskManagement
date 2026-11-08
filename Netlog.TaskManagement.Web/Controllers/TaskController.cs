@@ -28,7 +28,9 @@ public class TasksController : Controller
 
     public IActionResult Index()
     {
-        var tasks = _context.Tasks.ToList();
+        var tasks = _context.Tasks
+            .OrderByDescending(task => task.Id)
+            .ToList();
 
         var developers = _context.Developers
             .Include(d => d.Tasks)

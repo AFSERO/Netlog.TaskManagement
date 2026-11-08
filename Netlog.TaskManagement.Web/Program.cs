@@ -18,6 +18,8 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider
         .GetRequiredService<AppDbContext>();
 
+    db.Database.Migrate();
+
     if (!db.Developers.Any())
     {
         for (int i = 1; i <= 8; i++)
@@ -50,7 +52,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=Tasks}/{action=Index}/{id?}")
     .WithStaticAssets();
 
 
