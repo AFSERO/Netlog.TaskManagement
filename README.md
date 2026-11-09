@@ -55,9 +55,11 @@ Uygun aday yoksa görev `Pending` kalır. Aday seçilirse `DeveloperId`, `Assign
 
 **[Algoritmanın ayrıntılı akış şeması →](docs/FLOWCHART.md)**
 
-## Kodun yapısı
+## Mimari
 
-Uygulama tek bir MVC projesinde, sorumluluklarına göre klasörlere ayrılmıştır:
+Uygulama tek bir ASP.NET Core MVC projesidir. Controller istekleri karşılar, modeller veriyi temsil eder, Razor ekranları HTML üretir. Developer seçimi ayrı bir `AssignmentService` içinde tutulur; controller ve servis veritabanına EF Core üzerinden erişir. Bağımlılıklar constructor üzerinden alınır.
+
+Sorumluluklar aşağıdaki klasörlere ayrılmıştır. Ayrı projelerden oluşan katmanlı mimari veya Repository Pattern uygulanmamıştır.
 
 | Bölüm | Sorumluluk |
 | --- | --- |
@@ -69,7 +71,23 @@ Uygulama tek bir MVC projesinde, sorumluluklarına göre klasörlere ayrılmış
 | `Views` | Razor ekranları; iş yükü özeti ve görev işlemleri. |
 | `Program.cs` | Servis kayıtları, otomatik veritabanı hazırlığı ve yönlendirme. |
 
-Yeni görev önce kaydedilir; oluşan ID ile atama servisi çağrılır. Servis developer'ları görevleriyle birlikte okur, seçimi yapar ve atama sonucunu kaydeder. Controller ve servis, dependency injection ile sağlanan `AppDbContext` üzerinden çalışır.
+## Uygulama akışı
+
+1. Başlangıçta migration'lar uygulanır; developer tablosu boşsa sekiz kişi eklenir. Ana adres `TasksController.Index` ekranını açar.
+2. Kullanıcı görev formunu gönderir. Controller, başlığı ve 1–8 zorluk aralığını kontrol eder.
+3. Görev `Pending` olarak kaydedilir. Oluşan ID ile atama servisi çağrılır:
+
+   ```csharp
+   _context.Tasks.Add(taskItem);
+   _context.SaveChanges();
+
+   _assignmentService.AssignTask(taskItem.Id);
+   ```
+
+4. Servis developer'ları görevleriyle birlikte okur ve uygunluk/iş yükü kurallarını uygular. Uygun kişi varsa atamayı ayrı bir `SaveChanges()` çağrısıyla kaydeder; yoksa görev bekler.
+5. Controller listeye yönlendirir. Görevler yeniden okunur; Razor ekranı görevleri ve developer yüklerini gösterir. Ekrandaki yük özeti mevcut görevlerden hesaplanır.
+
+**[Kod örnekleriyle mimari ve teknik açıklamalar →](docs/ARCHITECTURE.md)**
 
 ## Mevcut kapsam ve sınırlar
 
